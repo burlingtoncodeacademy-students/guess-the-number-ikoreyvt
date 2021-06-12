@@ -25,8 +25,8 @@ async function start() {
         userGuess = await ask("Do you know what a NUMBER is?  ");
         userGuess = parseInt(userGuess);
       }
-    } else if ((userGuess > rangeMax) || (userGuess < rangeMin)) {
-      while ((userGuess > rangeMax) || (userGuess < rangeMin)) {
+    } else if (userGuess > rangeMax || userGuess < rangeMin) {
+      while (userGuess > rangeMax || userGuess < rangeMin) {
         userGuess = await ask(
           `Please choose a number between ${rangeMin} and ${rangeMax} `
         );
@@ -36,7 +36,7 @@ async function start() {
 
     if (userGuess > randomNumber) {
       console.log("Your guess was too high.");
-    } else if (userGuess < randomNumber){
+    } else if (userGuess < randomNumber) {
       console.log("Too low my dude.");
     }
     userGuess = await ask("Please try again! ");
