@@ -95,7 +95,10 @@ async function start() {
   //grab a random number and ask the user if guessed correctly
   let yesNo = await ask(`Did you choose ${randomNumber}? [y]es or [n]o: `);
   //write a loop that utilizes range function to continue running until the number has been guessed
+  //add a counter to the game to see how many guesses it took the computer
+  let gameCounter = 0;
   while (yesNo !== "y") {
+    gameCounter += 1;
     //changing the actual random number to be equal to the new, smarter number
     randomNumber = await rangeChange(number);
     //have user answer yes or no to the guessed number
@@ -104,8 +107,10 @@ async function start() {
   //nice
   if (number === 69) {
     console.log(`Your number was ${number}. Nice! xD`);
+    console.log(`It took me ${gameCounter} tries to guess your number.`);
   } else {
     console.log(`Your number was ${number}`);
+    console.log(`It took me ${gameCounter} tries to guess your number.`);
   }
 
   playAgain();
