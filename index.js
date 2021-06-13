@@ -17,14 +17,26 @@ if guess is lower, set max range to be lower than and NOT equal to the previous 
 
 if guess is higher set the lowest possible range to be higher than and NOT equal to the previous guess */
 
-//initiate a couple variables that dictate the range of the game
-//make a play again while loop that will continue to run the game until the user answers no to the play again function
-//let playAgain;
+//function that asks the user which game they want to play
+async function whichGame() {
+  let thisGame = await ask(
+    "Type '1' if you want me to guess your number or type '2' if you want to guess my number. You can also enter anything else to exit the program. "
+  );
+
+  if (thisGame === "1") {
+    gameOne();
+  } else if (thisGame === "2") {
+    gameTwo();
+  } else {
+    console.log("Goodbye!");
+    process.exit();
+  }
+}
 
 //function that asks user if they want to play the game again
 async function playAgain() {
   let answer = await ask(
-    "Do you want to play the game again? Anything besides 'no' will run the program again: "
+    "Do you want to play again? Anything besides 'no' will restart the program: "
   );
   answer = answer.toLowerCase();
   if (answer === "no") {
@@ -33,13 +45,14 @@ async function playAgain() {
   } else {
     //reset rangeMin to 1 and start the game again upon user saying anything but no
     rangeMin = 1;
-    start();
+    whichGame();
   }
 }
 
+//initiate a couple variables that dictate the range of the game globally so they can be used in every function required
+
 let rangeMax;
 let rangeMin = 1;
-//generate a random number within the range
 let randomNumber;
 
 //create a function that will adjust the range and choose "random" number based on the range
@@ -71,7 +84,7 @@ async function rangeChange(userNumber) {
   return randomNumber;
 }
 
-async function start() {
+async function gameOne() {
   //asking the user for a range max greater than 1
   rangeMax = await ask(
     "I'm going to attempt to guess a number between 1 and your requested max range. What would you like your max range to be? Any number greater than 1 please. :) "
@@ -96,9 +109,9 @@ async function start() {
   let yesNo = await ask(`Did you choose ${randomNumber}? [y]es or [n]o: `);
   //write a loop that utilizes range function to continue running until the number has been guessed
   //add a counter to the game to see how many guesses it took the computer
-  let gameCounter = 0;
+  let guessCounter = 0;
   while (yesNo !== "y") {
-    gameCounter += 1;
+    guessCounter += 1;
     //changing the actual random number to be equal to the new, smarter number
     randomNumber = await rangeChange(number);
     //have user answer yes or no to the guessed number
@@ -107,14 +120,59 @@ async function start() {
   //nice
   if (number === 69) {
     console.log(`Your number was ${number}. Nice! xD`);
-    console.log(`It took me ${gameCounter} tries to guess your number.`);
+    console.log(`It took me ${guessCounter} tries to guess your number.`);
   } else {
     console.log(`Your number was ${number}`);
-    console.log(`It took me ${gameCounter} tries to guess your number.`);
+    console.log(`It took me ${guessCounter} tries to guess your number.`);
   }
 
-  playAgain();
-  //process.exit();
+  return playAgain();
+}
+//another function 'gameTwo' where the user tries to guess the computer's randomly generated number
+async function gameTwo() {
+  //due to this game not extending the range beyond 100 range needs to be set to 100
+  rangeMax = 100;
+  //generate the computer's random number between 1 and 100
+  randomNumber = Math.floor(
+    Math.random() * (rangeMax - rangeMin + 1) + rangeMin
+  );
+  //ask the user for their first guess
+  userGuess = await ask(
+    `Please attempt a guess at my number between ${rangeMin} and ${rangeMax}: `
+  );
+  //pass the user input through parseInt for either turning their number to an int or converting to NaN if it's not a number
+  userGuess = parseInt(userGuess);
+  //while loop that continuously runs while the user hasn't properly guessed the number
+  while (userGuess !== randomNumber) {
+    //checking to make sure the user is entering a number and not a string and that it is within the range
+    while (isNaN(userGuess) || userGuess > rangeMax || userGuess < rangeMin) {
+      if (isNaN(userGuess)) {
+        userGuess = await ask("Do you know what a NUMBER is?  ");
+        userGuess = parseInt(userGuess);
+      } else if (userGuess > rangeMax || userGuess < rangeMin) {
+        userGuess = await ask(
+          `Please choose a number between ${rangeMin} and ${rangeMax}: `
+        );
+        userGuess = parseInt(userGuess);
+      }
+    }
+    //after receiving valid input from user, check against computer's number and tell user whether they were too high or too low
+    if (userGuess > randomNumber) {
+      console.log("Your guess was too high.");
+    } else if (userGuess < randomNumber) {
+      console.log("Too low my dude.");
+    }
+    //if user didn't guess properly ask for another number
+    userGuess = await ask("Please try again! ");
+    userGuess = parseInt(userGuess);
+  }
+  //nice
+  if (randomNumber === 69) {
+    console.log(`You got it, my number was ${randomNumber}. Nice!`);
+  } else {
+    console.log(`You got it, my number was ${randomNumber}!`);
+  }
+  return playAgain();
 }
 
-start();
+whichGame();
