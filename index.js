@@ -18,13 +18,31 @@ if guess is lower, set max range to be lower than and NOT equal to the previous 
 if guess is higher set the lowest possible range to be higher than and NOT equal to the previous guess */
 
 //initiate a couple variables that dictate the range of the game
+//make a play again while loop that will continue to run the game until the user answers no to the play again function
+//let playAgain;
+
+//function that asks user if they want to play the game again
+async function playAgain() {
+  let answer = await ask(
+    "Do you want to play the game again? Anything besides 'no' will run the program again: "
+  );
+  answer = answer.toLowerCase();
+  if (answer === "no") {
+    console.log("Goodbye!");
+    process.exit();
+  } else {
+    //reset rangeMin to 1 and start the game again upon user saying anything but no
+    rangeMin = 1;
+    start();
+  }
+}
+
 let rangeMax;
 let rangeMin = 1;
 //generate a random number within the range
 let randomNumber;
 
 //create a function that will adjust the range and choose "random" number based on the range
-
 async function rangeChange(userNumber) {
   //asking the user if the number guessed is higher or lower than their number
   let highLow = await ask("Was your number [h]igher or [l]ower than mine? ");
@@ -43,10 +61,10 @@ async function rangeChange(userNumber) {
     randomNumber = Math.round((rangeMax + rangeMin) / 2);
   }
   //if statement making sure the user isn't trying to cheat the system
-  if (userNumber >= rangeMax) {
+  if (userNumber > rangeMax) {
     console.log("We don't play with cheaters. Try again! >_>");
     process.exit();
-  } else if (userNumber <= rangeMin) {
+  } else if (userNumber < rangeMin) {
     console.log("We don't play with cheaters. Try again! <_<");
     process.exit();
   }
@@ -89,7 +107,9 @@ async function start() {
   } else {
     console.log(`Your number was ${number}`);
   }
-  process.exit();
+
+  playAgain();
+  //process.exit();
 }
 
 start();

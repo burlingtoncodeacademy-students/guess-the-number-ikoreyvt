@@ -28,7 +28,7 @@ async function start() {
     } else if (userGuess > rangeMax || userGuess < rangeMin) {
       while (userGuess > rangeMax || userGuess < rangeMin) {
         userGuess = await ask(
-          `Please choose a number between ${rangeMin} and ${rangeMax} `
+          `Please choose a number between ${rangeMin} and ${rangeMax}: `
         );
         userGuess = parseInt(userGuess);
       }
